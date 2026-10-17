@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Incident Dashboard{% endblock %}
+{% block page %}dashboard{% endblock %}
+{% block subtitle %}Failed-login trends, top source IPs, alert severity and incident status{% endblock %}
+{% block actions %}
+<select id="sourceFilter" class="select"><option value="">All sources</option>
+  {% for s in sources %}<option value="{{ s.source_id }}">{{ s.source_name }}</option>{% endfor %}</select>
+{% endblock %}
+{% block content %}
+<div class="kpis">
+  <div class="kpi"><span>Total events</span><b id="k_total">–</b></div>
+  <div class="kpi red"><span>Failed logins</span><b id="k_failed">–</b><small id="k_rate"></small></div>
+  <div class="kpi"><span>Unique source IPs</span><b id="k_ips">–</b></div>
+  <div class="kpi amber"><span>Open alerts</span><b id="k_open">–</b></div>
+  <div class="kpi dark"><span>Critical alerts</span><b id="k_crit">–</b></div>
+</div>
+<div class="grid g-2-1">
+  <div class="card"><h3>Failed-login trend</h3><div class="chart"><canvas id="trendChart"></canvas></div></div>
+  <div class="card"><h3>Alert severity</h3><div class="chart"><canvas id="sevChart"></canvas></div></div>
+</div>
+<div class="grid g-2">
+  <div class="card"><h3>Top source IPs (failed attempts)</h3><div class="chart"><canvas id="ipChart"></canvas></div></div>
+  <div class="card"><h3>Incident status</h3><div class="chart"><canvas id="statusChart"></canvas></div></div>
+</div>
+<div class="card">
+  <div class="card-head"><h3>Alert queue</h3>
+    <div class="filters" style="margin:0">
+      <select id="fSeverity"><option value="">All severities</option>{% for s in ['Critical','High','Medium','Low'] %}<option>{{ s }}</option>{% endfor %}</select>
+      <select id="fStatus"><option value="">All statuses</option>{% for s in statuses %}<option>{{ s }}</option>{% endfor %}</select>
+    </div></div>
+  <div class="table-wrap"><table class="table"><thead><tr><th>#</th><th>Severity</th><th>Type</th><th>Source IP</th><th>User</th><th>Score</th><th>Detected</th><th>Status</th></tr></thead>
+  <tbody id="alertRows"><tr><td colspan="8" class="muted">Loading…</td></tr></tbody></table></div>
+</div>
+{% endblock %}

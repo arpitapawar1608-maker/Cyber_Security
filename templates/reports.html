@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Reports{% endblock %}
+{% block subtitle %}Export alerts and security logs{% endblock %}
+{% block content %}
+<div class="grid g-1-1">
+  <div class="card report"><div class="r-ico">&#9888;</div><h3>Alerts report</h3><p class="muted">All alerts with type, severity, score, timestamp, source IP and incident status.</p><a class="btn primary" href="{{ url_for('report_alerts') }}">Download CSV</a></div>
+  <div class="card report"><div class="r-ico">&#9776;</div><h3>Security logs</h3><p class="muted">Normalised security events (latest 50,000 rows).</p><a class="btn primary" href="{{ url_for('report_logs') }}">Download CSV</a></div>
+</div>
+{% endblock %}

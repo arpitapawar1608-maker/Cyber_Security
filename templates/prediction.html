@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Prediction{% endblock %}
+{% block subtitle %}Predictive analytics: anomaly detection, model comparison and unusual-activity scores{% endblock %}
+{% block actions %}
+<form method="post" class="filters" style="margin:0">
+  <select name="source_id" class="select"><option value="">All sources</option>{% for s in sources %}<option value="{{ s.source_id }}">{{ s.source_name }}</option>{% endfor %}</select>
+  <button class="btn primary">&#9889; Run anomaly detection</button></form>
+{% endblock %}
+{% block content %}
+{% if not saved %}
+<div class="card"><p class="muted">No model has been trained yet. Upload logs, then press <b>Run anomaly detection</b>.</p></div>
+{% else %}
+<div class="kpis">
+  <div class="kpi"><span>Best model</span><b style="font-size:20px">{{ saved.best }}</b></div>
+  <div class="kpi"><span>IP-hour windows</span><b>{{ saved.windows }}</b><small>{{ saved.train }} train / {{ saved.test }} test</small></div>
+  <div class="kpi amber"><span>Anomalies flagged</span><b>{{ saved.flagged|length }}</b></div>
+  <div class="kpi"><span>Run at</span><b style="font-size:18px">{{ saved.trained_at }}</b></div>
+</div>
+<div class="card"><h3>Model comparison (hold-out test split)</h3>
+<div class="table-wrap"><table class="table"><thead><tr><th>Model</th><th>Accuracy</th><th>Precision</th><th>Recall</th><th>F1-score</th><th>Confusion matrix (TN / FP / FN / TP)</th><th></th></tr></thead><tbody>
+{% for m in saved.metrics %}<tr class="{{ 'best' if m.is_best }}"><td><b>{{ m.model }}</b></td><td>{{ '%.3f'|format(m.accuracy) }}</td><td>{{ '%.3f'|format(m.precision) }}</td><td>{{ '%.3f'|format(m.recall) }}</td><td>{{ '%.3f'|format(m.f1) }}</td>
+<td><code>{{ m.tn }} / {{ m.fp }} / {{ m.fn }} / {{ m.tp }}</code></td><td>{% if m.is_best %}<span class="badge sev-low">Best · saved</span>{% endif %}</td></tr>{% endfor %}
+</tbody></table></div>
+<p class="muted">Categorical event types are one-hot encoded per IP-hour window, features are scaled with StandardScaler, and the best model (by F1) is saved to <code>models/best_model.joblib</code>.</p></div>
+<div class="card"><h3>Predicted anomalies (unusual-activity score 0–100)</h3>
+<div class="table-wrap"><table class="table"><thead><tr><th>Source IP</th><th>Window</th><th>Failed / Total</th><th>Accounts</th><th>Type</th><th>Score</th><th>Severity</th></tr></thead><tbody>
+{% for a in saved.flagged|sort(attribute='score', reverse=True) %}<tr><td><code>{{ a.ip }}</code></td><td>{{ a.window }}</td><td>{{ a.failed }} / {{ a.total }}</td><td>{{ a.users }}</td><td><b>{{ a.alert_type }}</b></td>
+<td><div class="score"><i style="width:{{ a.score }}%" class="sev-bg-{{ a.severity|lower }}"></i></div><small>{{ a.score }}</small></td><td><span class="badge sev-{{ a.severity|lower }}">{{ a.severity }}</span></td></tr>
+{% else %}<tr><td colspan="7" class="muted">No anomalies flagged.</td></tr>{% endfor %}
+</tbody></table></div></div>
+{% endif %}
+{% endblock %}

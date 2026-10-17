@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block layout %}
+<div class="auth-wrap">
+  <div class="auth-hero">
+    <div class="brand big"><span class="logo">&#9919;</span><div><b>SentinelLog</b><small>Defensive Log Analytics</small></div></div>
+    <h2>Detect repeated failed logins and abnormal access before they become incidents.</h2>
+    <ul>
+      <li>Parse CSV &amp; text authentication logs</li>
+      <li>Statistical threshold &amp; Isolation Forest detection</li>
+      <li>Triage alerts and export reports</li>
+    </ul>
+  </div>
+  <div class="auth-card">
+    {% with msgs = get_flashed_messages(with_categories=true) %}
+      {% for cat, m in msgs %}<div class="flash {{ cat }}">{{ m }}</div>{% endfor %}
+    {% endwith %}
+    {% block auth %}{% endblock %}
+  </div>
+</div>
+{% endblock %}

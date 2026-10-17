@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Data Entry / Upload{% endblock %}
+{% block subtitle %}Upload CSV or text authentication logs{% endblock %}
+{% block content %}
+<div class="grid g-1-1">
+  <div class="card"><h3>Upload log file</h3>
+    {% if not sources %}
+    <p class="bad"><b>No log source exists.</b> Logs must belong to a source.
+      <a href="{{ url_for('sources') }}">Add one under Master Data</a>, then come back here.</p>
+    {% else %}
+    <form method="post" enctype="multipart/form-data" class="form">
+      <label>Log source<select name="source_id" required>{% for s in sources %}<option value="{{ s.source_id }}">{{ s.source_name }} ({{ s.server_name }})</option>{% endfor %}</select></label>
+      <label class="drop">Log file (.csv, .txt, .log – max 10 MB)<input type="file" name="logfile" accept=".csv,.txt,.log" required></label>
+      <button class="btn primary">Upload &amp; parse</button>
+    </form>
+    {% endif %}
+  </div>
+{% endblock %}

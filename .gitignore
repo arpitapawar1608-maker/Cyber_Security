@@ -1,0 +1,12 @@
+@"
+venv/
+.venv/
+__pycache__/
+*.pyc
+.env
+instance/
+*.db
+*.sqlite
+*.sqlite3
+.git/
+"@ | Set-Content .gitignore

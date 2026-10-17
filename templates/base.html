@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{% endblock %} · SentinelLog</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body data-page="{% block page %}{% endblock %}">
+{% block layout %}
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand"><span class="logo">&#9919;</span><div><b>SentinelLog</b><small>Log Analytics &amp; Detection</small></div></div>
+    <nav>
+      {% set nav = [('dashboard','Dashboard','&#9638;'),('sources','Master Data','&#9881;'),('upload','Upload Logs','&#8679;'),
+                    ('analytics_page','Analytics','&#128200;'),('prediction','Prediction','&#9889;'),
+                    ('history','History','&#8987;'),('reports','Reports','&#10515;')] %}
+      {% for ep, label, icon in nav %}
+      <a href="{{ url_for(ep) }}" class="{{ 'active' if request.endpoint == ep }}"><span class="ico">{{ icon|safe }}</span>{{ label }}</a>
+      {% endfor %}
+    </nav>
+    <div class="userbox">
+      <div class="avatar">{{ session.username[0]|upper }}</div>
+      <div><b>{{ session.username }}</b><small>{{ session.role|capitalize }}</small></div>
+      <a href="{{ url_for('logout') }}" class="logout" title="Sign out">&#10162;</a>
+    </div>
+  </aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">&#9776;</button>
+      <div><h1>{{ self.title() }}</h1><p class="sub">{% block subtitle %}{% endblock %}</p></div>
+      <div class="top-actions">{% block actions %}{% endblock %}</div>
+    </header>
+    {% with msgs = get_flashed_messages(with_categories=true) %}
+      {% for cat, m in msgs %}<div class="flash {{ cat }}">{{ m }}</div>{% endfor %}
+    {% endwith %}
+    <section class="content">{% block content %}{% endblock %}</section>
+  </main>
+</div>
+{% endblock %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

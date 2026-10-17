@@ -1,0 +1,10 @@
+{% extends "auth_base.html" %}
+{% block title %}Sign in{% endblock %}
+{% block auth %}
+<h3>Welcome back</h3><p class="muted">Administrator sign in.</p>
+<form method="post" class="form">
+  <label>Username<input name="username" required autofocus autocomplete="username"></label>
+  <label>Password<input type="password" name="password" required autocomplete="current-password"></label>
+  <button class="btn primary block">Sign in</button>
+</form>
+{% endblock %}

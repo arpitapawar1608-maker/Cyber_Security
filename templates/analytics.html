@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Analytics{% endblock %}
+{% block page %}analytics{% endblock %}
+{% block subtitle %}Descriptive (what happened) and diagnostic (why it happened) analytics{% endblock %}
+{% block actions %}
+<select id="sourceFilter" class="select"><option value="">All sources</option>
+  {% for s in sources %}<option value="{{ s.source_id }}" {{ 'selected' if selected==s.source_id }}>{{ s.source_name }}</option>{% endfor %}</select>
+<a class="btn primary" href="{{ url_for('prediction') }}">Go to Prediction &rarr;</a>
+{% endblock %}
+{% block content %}
+<h2 class="section">Descriptive – what happened?</h2>
+<div class="kpis" id="descKpis"></div>
+<div class="grid g-2">
+  <div class="card"><h3>Failed vs successful events</h3><div class="chart"><canvas id="trendChart"></canvas></div></div>
+  <div class="card"><h3>Event type distribution</h3><div class="chart"><canvas id="eventChart"></canvas></div></div>
+</div>
+<div class="card"><h3>Top source IPs</h3><div class="chart"><canvas id="ipChart"></canvas></div></div>
+
+<h2 class="section">Diagnostic – why did it happen?</h2>
+<div class="grid g-2-1">
+  <div class="card"><h3>Failed events by hour of day</h3><div class="chart"><canvas id="hourChart"></canvas></div></div>
+  <div class="card"><h3>Key findings</h3><ul class="findings" id="findings"></ul></div>
+</div>
+<div class="card"><h3>Suspicious IP profiles</h3><div class="table-wrap"><table class="table">
+  <thead><tr><th>IP</th><th>Failed</th><th>Total</th><th>Fail %</th><th>Accounts</th><th>First seen</th><th>Last seen</th><th>Pattern</th></tr></thead><tbody id="profiles"></tbody></table></div></div>
+
+<div class="grid g-1-1">
+  <div class="card"><h3>Classification</h3>
+    <div class="table-wrap"><table class="table"><thead><tr><th>Model</th><th>Accuracy</th><th>Precision</th><th>Recall</th><th>F1-score</th><th>Confusion matrix (TN / FP / FN / TP)</th></tr></thead><tbody id="clsRows"></tbody></table></div></div>
+  <div class="card"><h3>Regression</h3>
+    <div class="table-wrap"><table class="table"><thead><tr><th>Model</th><th>MAE</th><th>MSE</th><th>RMSE</th><th>R²</th></tr></thead><tbody id="regRows"></tbody></table></div></div>
+</div>
+<div class="card"><h3>Clustering</h3>
+  <div class="kpis" id="clusterKpis" style="margin-bottom:12px"></div>
+  <div class="table-wrap"><table class="table"><thead><tr><th>Cluster</th><th>Windows</th><th>Avg failed</th><th>Avg events</th><th>Avg accounts</th><th>Interpretation</th></tr></thead><tbody id="clusterRows"></tbody></table></div></div>
+
+<h2 class="section">Predictive – what may happen next?</h2>
+<div class="kpis" id="fcKpis"></div>
+<div class="grid g-2-1">
+  <div class="card"><h3>Failed logins per hour: observed and forecast</h3><div class="chart"><canvas id="forecastChart"></canvas></div></div>
+  <div class="card"><h3>Next 6 hours</h3>
+    <div class="table-wrap"><table class="table"><thead><tr><th>Hour</th><th>Expected failed logins</th></tr></thead><tbody id="fcRows"></tbody></table></div></div>
+</div>
+{% endblock %}

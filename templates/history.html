@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}History{% endblock %}
+{% block subtitle %}Timestamped prediction outputs (alerts) and the latest saved model{% endblock %}
+{% block content %}
+{% if saved %}<div class="card"><h3>Latest saved model</h3>
+<p><b>{{ saved.best }}</b> · trained {{ saved.trained_at }} · {{ saved.windows }} windows · F1 {{ '%.3f'|format((saved.metrics|selectattr('is_best')|first).f1) }}</p></div>{% endif %}
+<div class="card"><h3>Prediction / alert history</h3>
+<div class="table-wrap"><table class="table"><thead><tr><th>Created at</th><th>#</th><th>Type</th><th>Severity</th><th>Score</th><th>Source IP</th><th>User</th><th>Source</th><th>Status</th></tr></thead><tbody>
+{% for a in alerts %}<tr><td>{{ a.created_at }}</td><td>{{ a.alert_id }}</td><td><b>{{ a.alert_type }}</b></td><td><span class="badge sev-{{ a.severity|lower }}">{{ a.severity }}</span></td><td>{{ a.score }}</td>
+<td><code>{{ a.ip_address }}</code></td><td>{{ a.username }}</td><td>{{ a.source_name }}</td><td>{{ a.status }}</td></tr>
+{% else %}<tr><td colspan="9" class="muted">No history yet.</td></tr>{% endfor %}
+</tbody></table></div></div>
+{% endblock %}

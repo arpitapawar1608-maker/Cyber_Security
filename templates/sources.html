@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Master Data Management{% endblock %}
+{% block subtitle %}Log sources (servers and log types){% endblock %}
+{% block content %}
+<div class="grid g-1-2">
+  <div class="card"><h3>Add log source</h3>
+    <form method="post" class="form">
+      <label>Source name<input name="source_name" required placeholder="e.g. VPN Gateway Log"></label>
+      <label>Server name<input name="server_name" required placeholder="e.g. vpn-01"></label>
+      <label>Source type<select name="source_type"><option value="auth">Authentication</option><option value="server">Server / syslog</option><option value="web">Web access</option><option value="firewall">Firewall</option></select></label>
+      <button class="btn primary">Add source</button>
+    </form>
+  </div>
+  <div class="card"><h3>Registered sources</h3>
+    <div class="table-wrap"><table class="table"><thead><tr><th>Name</th><th>Server</th><th>Type</th><th>Logs</th><th></th></tr></thead><tbody>
+    {% for s in sources %}
+      <tr><td><b>{{ s.source_name }}</b></td><td>{{ s.server_name }}</td><td><span class="pill">{{ s.source_type }}</span></td><td>{{ s.log_count }}</td>
+        <td class="row-actions">
+          <details class="edit"><summary class="btn sm">Edit</summary>
+            <form method="post" action="{{ url_for('source_edit', sid=s.source_id) }}" class="form inline-form">
+              <input name="source_name" value="{{ s.source_name }}" required><input name="server_name" value="{{ s.server_name }}" required>
+              <select name="source_type">{% for t in ['auth','server','web','firewall'] %}<option {{ 'selected' if t==s.source_type }}>{{ t }}</option>{% endfor %}</select>
+              <button class="btn sm primary">Save</button></form></details>
+          <form method="post" action="{{ url_for('source_delete', sid=s.source_id) }}" onsubmit="return confirm('Delete this source and ALL its logs and alerts?')">
+            <button class="btn sm danger">Delete</button></form>
+        </td>
+      </tr>
+    {% else %}<tr><td colspan="5" class="muted">No sources yet.</td></tr>{% endfor %}
+    </tbody></table></div>
+  </div>
+</div>
+{% endblock %}
